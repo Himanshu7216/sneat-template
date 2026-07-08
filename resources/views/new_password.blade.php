@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en" class="layout-wide customizer-hide" data-assets-path="../assets/"
     data-template="vertical-menu-template-free">
 
@@ -120,53 +121,50 @@
                             </a>
                         </div>
                         <!-- /Logo -->
-                        <h4 class="mb-1">Welcome to Sneat! 👋</h4>
-                        <p class="mb-6">Please sign-in to your account and start the adventure</p>
+                        <h4 class="mb-1">Reset Password 🔒</h4>
+                        <p class="mb-6">Your new password must be different from previously used passwords</p>
 
-                        <form id="loginform" class="mb-6" action="/login" method="post">
+                        <form id="new_password" class="mb-6" action="{{ route('new-password') }}" method="post">
                             @csrf
-                            <div class="mb-6">
-                                <label for="email" class="form-label">Email </label>
-                                <input type="text" class="form-control" id="email" maxlength="255" name="email"
-                                    placeholder="Enter your email " autofocus />
-                                <span class="text-danger email_error"></span>
-                            </div>
+                            <input type="hidden" name="email" value="{{ $email }}">
                             <div class="mb-6 form-password-toggle">
-                                <label class="form-label" for="password">Password</label>
+                                <label class="form-label" for="new_password">New Password</label>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" name="password"
+                                    <input type="password" id="new_password" class="form-control" name="new_password"
                                         maxlength="20"
                                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                        aria-describedby="password" />
+                                        aria-describedby="new_password" />
                                     <span class="input-group-text cursor-pointer"><i
                                             class="icon-base bx bx-hide"></i></span>
                                 </div>
-                                <span class="text-danger password_error"></span>
+                                <span class="text-danger new_password_error"></span>
 
                             </div>
-                            <div class="mb-8">
-                                <div class="d-flex justify-content-between">
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" name="remember"
-                                            id="remember-me">
-                                        <label class="form-check-label" for="remember-me"> Remember Me </label>
-                                    </div>
-                                    <a href="{{ route('forgot-password-page') }}">
-                                        <span>Forgot Password?</span>
-                                    </a>
+                            <div class="mb-6 form-password-toggle">
+                                <label class="form-label" for="confirm_password">Confirm Password</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="confirm_password" class="form-control" name="confirm_password"
+                                        maxlength="20"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                        aria-describedby="confirm_password" />
+                                    <span class="input-group-text cursor-pointer"><i
+                                            class="icon-base bx bx-hide"></i></span>
                                 </div>
+                                <span class="text-danger confirm_password_error"></span>
+
                             </div>
+
                             <div class="mb-6">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
+                                <button class="btn btn-primary d-grid w-100" type="submit">Reset New Password</button>
                             </div>
+                            <div class="text-center">
+                            <a href="{{ route('login') }}" class="d-flex justify-content-center">
+                                <i class="icon-base bx bx-chevron-left me-1"></i>
+                                Back to login
+                            </a>
+                        </div>
                         </form>
 
-                        <p class="text-center">
-                            <span>New on our platform?</span>
-                            <a href="{{ route('register') }}">
-                                <span>Create an account</span>
-                            </a>
-                        </p>
                     </div>
                 </div>
                 <!-- /Register -->
@@ -215,109 +213,111 @@
 
             $('form, input').attr('autocomplete', 'off');
 
-            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
 
-            //email
-            $("#email").on("input blur", function () {
-                let email = $(this).val().trim();
 
-                if (email === "") {
-                    $(".email_error").text("Email is required");
-                } else if (!emailPattern.test(email)) {
-                    $(".email_error").text("Enter valid email");
-                } else {
-                    $(".email_error").text("");
-                }
-            });
             //password
-            $("#password").on("input blur", function () {
+            $("#new_password").on("input blur", function () {
                 this.value = this.value.slice(0, 20);
 
-                let password = $(this).val().trim();
+                let new_password = $(this).val().trim();
 
-                if (password === "") {
-                    $(".password_error").text("Password is required");
-                } else if (password.length < 8) {
-                    $(".password_error").text("Password must be at least 8 characters");
+                if (new_password === "") {
+                    $(".new_password_error").text("Password is required");
+                } else if (new_password.length < 8) {
+                    $(".new_password_error").text("Password must be at least 8 characters");
                 } else {
-                    $(".password_error").text("");
+                    $(".new_password_error").text("");
+                }
+            });
+
+            $("#confirm_password").on("input blur", function () {
+                this.value = this.value.slice(0, 20);
+
+                let confirm_password = $(this).val().trim();
+
+                if (confirm_password === "") {
+                    $(".confirm_password_error").text("Password is required");
+                } else if (confirm_password.length < 8) {
+                    $(".confirm_password_error").text("Password must be at least 8 characters");
+                } else {
+                    $(".confirm_password_error").text("");
                 }
             });
 
 
             // Submit Login Form
-            $("#formAuthentication").submit(function (e) {
+            // $("#new_password").submit(function (e) {
 
-                e.preventDefault();
+            //     e.preventDefault();
 
-                let formData = new FormData(this);
+            //     let formData = new FormData(this);
 
-                console.log(Object.fromEntries(formData.entries()));
+            //     console.log(Object.fromEntries(formData.entries()));
 
-                $.ajax({
+            //     $.ajax({
 
-                    url: '/login',
+            //         url: '/login',
 
-                    type: "POST",
+            //         type: "POST",
 
-                    data: formData,
+            //         data: formData,
 
-                    processData: false,
+            //         processData: false,
 
-                    contentType: false,
+            //         contentType: false,
 
-                    dataType: "json",
+            //         dataType: "json",
 
-                    success: function (response) {
+            //         success: function (response) {
 
-                        if (response.status === "success") {
+            //             if (response.status === "success") {
 
-                            $("#successNotification").fadeIn();
+            //                 $("#successNotification").fadeIn();
 
-                            setTimeout(function () {
-                                window.location.href = "/dashboard";
-                            }, 1000);
+            //                 setTimeout(function () {
+            //                     window.location.href = "/dashboard";
+            //                 }, 1000);
 
-                        } else {
+            //             } else {
 
-                            $("#errorNotification")
-                                .text(response.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
+            //                 $("#errorNotification")
+            //                     .text(response.message)
+            //                     .fadeIn()
+            //                     .delay(3000)
+            //                     .fadeOut();
 
-                        }
+            //             }
 
-                    },
+            //         },
 
-                    error: function (xhr) {
+            //         error: function (xhr) {
 
-                        if (xhr.status === 422) {
+            //             if (xhr.status === 422) {
 
-                            $(".text-danger").text("");
+            //                 $(".text-danger").text("");
 
-                            $.each(xhr.responseJSON.errors, function (key, value) {
+            //                 $.each(xhr.responseJSON.errors, function (key, value) {
 
-                                $("." + key + "_error").text(value[0]);
+            //                     $("." + key + "_error").text(value[0]);
 
-                            });
+            //                 });
 
-                        } else {
+            //             } else {
 
-                            $("#errorNotification")
-                                .text(xhr.responseJSON.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
+            //                 $("#errorNotification")
+            //                     .text(xhr.responseJSON.message)
+            //                     .fadeIn()
+            //                     .delay(3000)
+            //                     .fadeOut();
 
-                        }
+            //             }
 
-                    }
+            //         }
 
-                });
+            //     });
 
-            });
+            // });
 
         });
     </script>

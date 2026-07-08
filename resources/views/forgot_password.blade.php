@@ -6,8 +6,8 @@
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>login</title>
+
+    <title>Demo: Forgot Password Basic - Pages | Sneat - Bootstrap Dashboard FREE</title>
 
     <meta name="description" content="" />
 
@@ -59,11 +59,11 @@
     <div class="container-xxl">
         <div class="authentication-wrapper authentication-basic container-p-y">
             <div class="authentication-inner">
-                <!-- Register -->
+                <!-- Forgot Password -->
                 <div class="card px-sm-6 px-0">
                     <div class="card-body">
                         <!-- Logo -->
-                        <div class="app-brand justify-content-center">
+                        <div class="app-brand justify-content-center mb-6">
                             <a href="index.html" class="app-brand-link gap-2">
                                 <span class="app-brand-logo demo">
                                     <span class="text-primary">
@@ -120,56 +120,30 @@
                             </a>
                         </div>
                         <!-- /Logo -->
-                        <h4 class="mb-1">Welcome to Sneat! 👋</h4>
-                        <p class="mb-6">Please sign-in to your account and start the adventure</p>
-
-                        <form id="loginform" class="mb-6" action="/login" method="post">
+                        <h4 class="mb-1">Forgot Password? 🔒</h4>
+                        <p class="mb-6">Enter your email and we'll send you instructions to reset your password</p>
+                        <form id="reset-password-form"
+      action="{{ route('forgot-password') }}"
+      method="POST">
                             @csrf
+                            {{-- <input type="hidden" name="email" value="{{ $email }}"> --}}
                             <div class="mb-6">
                                 <label for="email" class="form-label">Email </label>
                                 <input type="text" class="form-control" id="email" maxlength="255" name="email"
                                     placeholder="Enter your email " autofocus />
                                 <span class="text-danger email_error"></span>
                             </div>
-                            <div class="mb-6 form-password-toggle">
-                                <label class="form-label" for="password">Password</label>
-                                <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" name="password"
-                                        maxlength="20"
-                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                        aria-describedby="password" />
-                                    <span class="input-group-text cursor-pointer"><i
-                                            class="icon-base bx bx-hide"></i></span>
-                                </div>
-                                <span class="text-danger password_error"></span>
-
-                            </div>
-                            <div class="mb-8">
-                                <div class="d-flex justify-content-between">
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" name="remember"
-                                            id="remember-me">
-                                        <label class="form-check-label" for="remember-me"> Remember Me </label>
-                                    </div>
-                                    <a href="{{ route('forgot-password-page') }}">
-                                        <span>Forgot Password?</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="mb-6">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
-                            </div>
+                            <button type="submit" class="btn btn-primary d-grid w-100">Send Reset Link</button>
                         </form>
-
-                        <p class="text-center">
-                            <span>New on our platform?</span>
-                            <a href="{{ route('register') }}">
-                                <span>Create an account</span>
+                        <div class="text-center">
+                            <a href="{{ route('login') }}" class="d-flex justify-content-center">
+                                <i class="icon-base bx bx-chevron-left me-1"></i>
+                                Back to login
                             </a>
-                        </p>
+                        </div>
                     </div>
                 </div>
-                <!-- /Register -->
+                <!-- /Forgot Password -->
             </div>
         </div>
     </div>
@@ -204,7 +178,7 @@
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script>
+      <script>
         $(document).ready(function () {
 
             $.ajaxSetup({
@@ -213,10 +187,8 @@
                 },
             });
 
-            $('form, input').attr('autocomplete', 'off');
 
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
 
             //email
             $("#email").on("input blur", function () {
@@ -230,94 +202,78 @@
                     $(".email_error").text("");
                 }
             });
-            //password
-            $("#password").on("input blur", function () {
-                this.value = this.value.slice(0, 20);
 
-                let password = $(this).val().trim();
+            // $("#reset-password-form").submit(function (e) {
 
-                if (password === "") {
-                    $(".password_error").text("Password is required");
-                } else if (password.length < 8) {
-                    $(".password_error").text("Password must be at least 8 characters");
-                } else {
-                    $(".password_error").text("");
-                }
-            });
+            //     e.preventDefault();
 
+            //     let formData = new FormData(this);
 
-            // Submit Login Form
-            $("#formAuthentication").submit(function (e) {
+            //     console.log(Object.fromEntries(formData.entries()));
 
-                e.preventDefault();
+            //     $.ajax({
 
-                let formData = new FormData(this);
+            //         url: '/reset_password',
 
-                console.log(Object.fromEntries(formData.entries()));
+            //         type: "get",
 
-                $.ajax({
+            //         data: formData,
 
-                    url: '/login',
+            //         processData: false,
 
-                    type: "POST",
+            //         contentType: false,
 
-                    data: formData,
+            //         dataType: "json",
 
-                    processData: false,
+            //         success: function (response) {
 
-                    contentType: false,
+            //             if (response.status === "success") {
 
-                    dataType: "json",
+            //                 $("#successNotification").fadeIn();
 
-                    success: function (response) {
+            //                 setTimeout(function () {
+            //                     window.location.href = "/";
+            //                 }, 1000);
 
-                        if (response.status === "success") {
+            //             } else {
 
-                            $("#successNotification").fadeIn();
+            //                 $("#errorNotification")
+            //                     .text(response.message)
+            //                     .fadeIn()
+            //                     .delay(3000)
+            //                     .fadeOut();
 
-                            setTimeout(function () {
-                                window.location.href = "/dashboard";
-                            }, 1000);
+            //             }
 
-                        } else {
+            //         },
 
-                            $("#errorNotification")
-                                .text(response.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
+            //         error: function (xhr) {
 
-                        }
+            //             if (xhr.status === 422) {
 
-                    },
+            //                 $(".text-danger").text("");
 
-                    error: function (xhr) {
+            //                 $.each(xhr.responseJSON.errors, function (key, value) {
 
-                        if (xhr.status === 422) {
+            //                     $("." + key + "_error").text(value[0]);
 
-                            $(".text-danger").text("");
+            //                 });
 
-                            $.each(xhr.responseJSON.errors, function (key, value) {
+            //             } else {
 
-                                $("." + key + "_error").text(value[0]);
+            //                 $("#errorNotification")
+            //                     .text(xhr.responseJSON.message)
+            //                     .fadeIn()
+            //                     .delay(3000)
+            //                     .fadeOut();
 
-                            });
+            //             }
 
-                        } else {
+            //         }
 
-                            $("#errorNotification")
-                                .text(xhr.responseJSON.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
+            //     });
 
-                        }
-
-                    }
-
-                });
-
-            });
+            // });
 
         });
     </script>
