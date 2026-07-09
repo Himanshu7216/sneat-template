@@ -38,16 +38,14 @@ class LoginController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
         $user = User::where('email', $request->email)->first();
         // dd(Hash::check($request->password, $user->password));
         // dd('hi');
         if (!empty($user) && Hash::check($request->password, $user->password)) {
             Auth::login($user);
             $request->session()->regenerate();
-
-            return redirect('/dashboard');
-        }
+            }
+        return redirect()->route('dashboard',['user'=>$user]);
     }
     public function logout(Request $request)
     {

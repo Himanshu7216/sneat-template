@@ -213,7 +213,7 @@
                 },
             });
 
-            $('form, input').attr('autocomplete', 'off');
+            // $('form, input').attr('autocomplete', 'off');
 
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
