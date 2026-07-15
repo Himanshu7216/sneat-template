@@ -42,7 +42,10 @@
 
 
     <!-- Helpers -->
+        <!-- Helpers -->
     <script src="{{ asset('./assets/vendor/js/helpers.js') }}"></script>
+    {{-- <script src="{{ asset('js/helpers/validation-helper.js') }}"></script> --}}
+
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
@@ -52,5 +55,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
   </head>

@@ -1,8 +1,3 @@
-<div>
-     <button class="btn btn-danger"><a href="/logout">Logout</a></button>
-{{-- @dd(auth()->user()) --}}
-</div>
-
 <!doctype html>
 <html
   lang="en"

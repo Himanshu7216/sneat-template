@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Exception;
+
 
 class ProfileController extends Controller
 {
@@ -20,56 +22,89 @@ class ProfileController extends Controller
     }
     public function profile_Update(Request $request)
     {
-        // dd($request->all());
-       $validator = Validator::make($request->all(), [
-            'name' => ['required','string','max:255'],
+        if ($request->ajax()) {
+            // dd($request->all());
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255', 'min:3', 'regex:/^[a-zA-Z\s]+$/'],
 
-            'email' => ['required','email','max:255',Rule::unique('users', 'email')->ignore(Auth::id())],
+                'phone' => [
+                    'required',
+                    'digits:10',
+                    'regex:/^[6-9]\d{9}$/',
 
-            'phone' => ['nullable','digits_between:10,15'],
+                ],
 
-            'dob' => ['nullable','date','before:today'],
+                'dob' => [
+                    'required',
+                    'date',
+                    'before:today',
+                    'after:' . now()->subYears(120)->format('Y-m-d'),
+                    'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                ],
 
-            'gender' => ['nullable',Rule::in(['Male', 'Female', 'Other'])],
+                'gender' => [
+                    'required',
+                    'in:male,female,other',
+                ],
 
-            'address' => ['nullable','string','max:500'],
+                'address' => [
+                    'required',
+                    'string',
+                    'min:10',
+                    'max:255',
+                    'regex:/^[A-Za-z0-9\s,.\-\/#]+$/'
+                ],
 
-            'bio' => ['nullable','string','max:1000'],
+                'bio' => [
+                    'nullable',
+                    'string',
+                    'max:500',
+                    'min:10'
+                ],
 
-            'profile_image' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
-        ]);
+                'profile_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            try {
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-        $user = Auth::user();
-        $user->name= $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->dob = $request->dob;
-        $user->gender = $request->gender;
-        $user->address = $request->address;
-        $user->bio = $request->bio;
+                $user = Auth::user();
+                $user->name = $request->name;
+                $user->phone = $request->phone;
+                $user->dob = $request->dob;
+                $user->gender = $request->gender;
+                $user->address = $request->address;
+                $user->bio = $request->bio;
 
-        if ($request->hasFile('profile_image')) {
-            $image = $request->file('profile_image');
+                if ($request->hasFile('profile_image')) {
+                    $image = $request->file('profile_image');
 
-            $uuid = Str::uuid()->toString();    //random string
-            $imageName = $image->getClientOriginalName();   // name with extension
-            $filename = pathinfo($imageName, PATHINFO_FILENAME);    //name without extension
-            $extension = $image->getClientOriginalExtension();  //extension
+                    $uuid = Str::uuid()->toString();    //random string
+                    $imageName = $image->getClientOriginalName();   // name with extension
+                    $filename = pathinfo($imageName, PATHINFO_FILENAME);    //name without extension
+                    $extension = $image->getClientOriginalExtension();  //extension
 
-            $profile_image = $filename . '_' . $uuid . '.' . $extension;
-            $image->move(public_path('profile_pic'), $profile_image);
-            $user->profile_image = $profile_image;
-        }
+                    $profile_image = $filename . '_' . $uuid . '.' . $extension;
+                    $image->move(public_path('profile_pic'), $profile_image);
+                    $user->profile_image = $profile_image;
+                }
+                $user->save();
+                return response()->json([
 
-        if($user->save()){
-            return redirect()->route('dashboard');
+                    "status" => "success",
+                    "message" => "Profile Updated"
+                ]);
+            } catch (Exception $e) {
+                return response()->json([
+                    'status' => "error",
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
         }
         return redirect()->back();
     }

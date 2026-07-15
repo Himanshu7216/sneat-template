@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('content')
-
+    @include('notify::components.notify')
 <div class="container mt-5">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
             <h4 class="mb-4">Update Profile</h4>
 
-            <form action="{{ route('profile.updateprofile.update') }}" method="POST" enctype="multipart/form-data">
+            <form id="updateProfileForm" action="{{ route('profile.updateprofile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="user_id" value="{{ $user->id }}">
@@ -18,9 +18,11 @@
                         <label class="form-label">Full Name</label>
                         <input type="text"
                                name="name"
+                               id="name"
                                class="form-control"
                                placeholder="Enter Full Name"
                                value="{{ old('name', $user->name ?? '') }}">
+                               <span class="text-danger error-text name_error"></span>
                     </div>
 
                     <!-- Email -->
@@ -28,9 +30,11 @@
                         <label class="form-label">Email Address</label>
                         <input type="email"
                                name="email"
-                               class="form-control"
+                               id="email"
+                               style="background: rgba(255, 169, 48, 0.381)"
+                               class="form-control" maxlength="50" minlength="5" autocomplete="email"
                                placeholder="Enter Email"
-                               value="{{ old('email', $user->email ?? '') }}">
+                               value="{{ old('email', $user->email ?? '') }}" readonly>
                     </div>
 
                     <!-- Phone -->
@@ -38,9 +42,12 @@
                         <label class="form-label">Phone Number</label>
                         <input type="text"
                                name="phone"
+                               id="phone"
                                class="form-control"
                                placeholder="Enter Phone Number"
+                               maxlength="10"
                                value="{{ old('phone', $user->phone ?? '') }}">
+                               <span class="text-danger error-text phone_error"></span>
                     </div>
 
                     {{-- <!-- Password -->
@@ -60,8 +67,11 @@
                         <label class="form-label">Date of Birth</label>
                         <input type="date"
                                name="dob"
+                               id="dob"
                                class="form-control"
+                               ax="{{ date('Y-m-d') }}"
                                value="{{ old('dob', $user->dob ?? '') }}">
+                                <span class="text-danger error-text dob_error"></span>
                     </div>
 
                     <!-- Gender -->
@@ -72,7 +82,8 @@
                             <input class="form-check-input"
                                    type="radio"
                                    name="gender"
-                                   value="Male"
+                                   id="gender"
+                                   value="male"
                                    checked>
 
                             <label class="form-check-label">
@@ -84,7 +95,8 @@
                             <input class="form-check-input"
                                    type="radio"
                                    name="gender"
-                                   value="Female">
+                                   id="gender"
+                                   value="female">
 
                             <label class="form-check-label">
                                 Female
@@ -94,13 +106,15 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input"
                                    type="radio"
+                                   id="gender"
                                    name="gender"
-                                   value="Other">
+                                   value="other">
 
                             <label class="form-check-label">
                                 Other
                             </label>
                         </div>
+                        <span class="text-danger error-text gender_error"></span>
                     </div>
 
                     <!-- Address -->
@@ -109,7 +123,10 @@
                         <textarea name="address"
                                   class="form-control"
                                   rows="3"
+                                  id="address"
+                                  maxlength="255"
                                   placeholder="Enter Address">{{ old('address', $user->address ?? '') }}</textarea>
+                                  <small class="text-danger address_error"></small>
                     </div>
 
                     <!-- Bio -->
@@ -117,8 +134,11 @@
                         <label class="form-label">Bio</label>
                         <textarea name="bio"
                                   class="form-control"
+                                  id="bio"
                                   rows="4"
+                                  maxlength="500"
                                   placeholder="Tell something about yourself">{{ old('bio', $user->bio ?? '') }}</textarea>
+                                  <small class="text-danger bio_error"></small>
                     </div>
 
                     <!-- Profile Image -->
@@ -126,9 +146,11 @@
                         <label class="form-label">Profile Image</label>
                         <input type="file"
                                name="profile_image"
+                               id="profile_image"
                                class="form-control"
                                accept="image/*">
                     </div>
+                    <span class="text-danger error-text profile_image_error"></span>
 
                     <!-- Preview -->
                     <div class="col-md-6 mb-3">
@@ -152,7 +174,7 @@
                         Update Profile
                     </button>
 
-                    <button type="reset" class="btn btn-outline-secondary" onclick="history.back()">
+                    <button type="reset" class="btn btn-outline-secondary" href="{{ route('dashboard') }}" id="cancleUpdate">
                         Cancel
                     </button>
                 </div>
@@ -162,4 +184,5 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('js/userProfile.js') }}"></script>
 @endsection

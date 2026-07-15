@@ -51,9 +51,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <body>
+    @include('notify::components.notify')
     <!-- Content -->
 
     <div class="container-xxl">
@@ -116,7 +118,7 @@
                                         </svg>
                                     </span>
                                 </span>
-                                <span class="app-brand-text demo text-heading fw-bold">Sneat</span>
+                                <span class="app-brand-text demo text-heading fw-bold">Sign up</span>
                             </a>
                         </div>
                         <!-- /Logo -->
@@ -127,25 +129,67 @@
                             @csrf
                             <div class="mb-6">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" maxlength="100"
+                                <input type="text" class="form-control" id="username" name="username" maxlength="50" minlength="3"
                                     placeholder="Enter your username" autofocus />
                                 <span class="text-danger error-text username_error"></span>
 
                             </div>
                             <div class="mb-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="text" class="form-control" id="email" name="email" maxlength="225"
+                                <input type="email" class="form-control" id="email" name="email" maxlength="50" minlength="5" autocomplete="email" pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/"
                                     placeholder="Enter your email" />
                                 <span class="text-danger error-text email_error"></span>
 
                             </div>
+                            <div class="mb-6">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" maxlength="10"
+                                    placeholder="Enter your phone number" />
+                                <span class="text-danger error-text phone_error"></span>
+                            </div>
+                            <div class="row">
+                                <!-- DOB -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="dob" class="form-label">Date of Birth</label>
+                                    <input type="date" name="dob" id="dob" class="form-control" max="{{ date('Y-m-d') }}">
+                                    <span class="text-danger error-text dob_error"></span>
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Gender</label>
+
+                                    <div class="btn-group w-100">
+                                        <button type="button" id="genderBtn"
+                                            class="btn btn-outline-secondary dropdown-toggle text-start"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Select Gender
+                                        </button>
+
+                                        <ul class="dropdown-menu w-100">
+                                            <li><a class="dropdown-item gender-option" href="#"
+                                                    data-value="male">Male</a></li>
+                                            <li><a class="dropdown-item gender-option" href="#"
+                                                    data-value="female">Female</a></li>
+                                            <li><a class="dropdown-item gender-option" href="#"
+                                                    data-value="other">Other</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Hidden input -->
+                                    <input type="hidden" name="gender" id="gender">
+
+                                    <span class="text-danger error-text gender_error"></span>
+                                </div>
+                            </div>
+
                             <div class="form-password-toggle">
                                 <label class="form-label" for="password">Password</label>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" maxlength="20"
+                                    <input type="password" id="password" class="form-control" maxlength="64" minlength="8"
                                         name="password"
                                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                        aria-describedby="password" />
+                                        aria-describedby="password"/>
                                     <span class="input-group-text cursor-pointer"><i
                                             class="icon-base bx bx-hide"></i></span>
 
@@ -153,13 +197,20 @@
                                 </div>
                                 <span class="text-danger error-text password_error"></span>
                             </div>
+
+                            <div class="mb-6">
+                                <label class="form-label">Profile Image</label>
+                                <input type="file" class="form-control" id="profile_image" name="profile_image"
+                                    accept="image/*" />
+                                <span class="text-danger error-text profile_image_error"></span>
+                            </div>
                             <div class="my-7">
                                 <div class="form-check mb-0">
-                                    <input class="form-check-input" type="checkbox" id="terms-conditions"
-                                        name="terms" />
+                                    <input class="form-check-input" type="checkbox"  id="terms-conditions"
+                                        name="terms" value="checked"/>
                                     <label class="form-check-label" for="terms-conditions">
                                         I agree to
-                                        <a href="javascript:void(0);">privacy policy & terms</a>
+                                        <a href="#">privacy policy & terms</a>
                                     </label>
                                 </div>
                                 <span class="text-danger error-text terms_error"></span>
@@ -169,7 +220,7 @@
 
                         <p class="text-center">
                             <span>Already have an account?</span>
-                            <a href="{{ route('login') }}">
+                            <a href="{{ route('login') }}" id="loginLink">
                                 <span>Sign in instead</span>
                             </a>
                         </p>
@@ -210,7 +261,10 @@
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="{{ asset('js/helpers/validation-helper.js') }}"></script>
 <script src="{{ asset('./js/register.js') }}">
 </script>
 

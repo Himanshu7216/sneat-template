@@ -1,4 +1,6 @@
 <!-- Core JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="{{ asset('js/helpers/validation-helper.js') }}"></script>
 
     <script src="../assets/vendor/libs/jquery/jquery.js"></script>
 

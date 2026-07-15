@@ -51,9 +51,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+
 </head>
 
 <body>
+    @include('notify::components.notify')
+
     <!-- Content -->
 
     <div class="container-xxl">
@@ -122,21 +127,21 @@
                         <!-- /Logo -->
                         <h4 class="mb-1">Forgot Password? 🔒</h4>
                         <p class="mb-6">Enter your email and we'll send you instructions to reset your password</p>
-                        <form id="reset-password-form"
-      action="{{ route('forgot-password') }}"
-      method="POST">
+                        <form id="reset-password-form" action="/forgot_password" method="POST">
                             @csrf
                             {{-- <input type="hidden" name="email" value="{{ $email }}"> --}}
                             <div class="mb-6">
                                 <label for="email" class="form-label">Email </label>
-                                <input type="text" class="form-control" id="email" maxlength="255" name="email"
+                                <input type="text" class="form-control" id="email" name="email" maxlength="50"
+                                    minlength="5" autocomplete="email"
                                     placeholder="Enter your email " autofocus />
                                 <span class="text-danger email_error"></span>
                             </div>
                             <button type="submit" class="btn btn-primary d-grid w-100">Send Reset Link</button>
                         </form>
+                        <br>
                         <div class="text-center">
-                            <a href="{{ route('login') }}" class="d-flex justify-content-center">
+                            <a href="{{ route('login') }}" id="loginLink" class="d-flex justify-content-center">
                                 <i class="icon-base bx bx-chevron-left me-1"></i>
                                 Back to login
                             </a>
@@ -178,7 +183,10 @@
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-      <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="{{ asset('js/helpers/validation-helper.js') }}"></script>
+    <script>
         $(document).ready(function () {
 
             $.ajaxSetup({
@@ -187,20 +195,86 @@
                 },
             });
 
+            toastr.options.preventDuplicates = true;
 
-            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            $("#loginLink").on("click", function (e) {
+                e.preventDefault();
 
-            //email
-            $("#email").on("input blur", function () {
-                let email = $(this).val().trim();
+                window.location.href = $(this).attr("href");
+            });
 
+            validateEmail("#email");
+
+
+
+            $("#reset-password-form").submit(function (e) {
+                e.preventDefault();
+                let isValid = true;
+
+                $(".error-text").text("");
+
+                // Email
+                let email = $("#email").val().trim();
                 if (email === "") {
-                    $(".email_error").text("Email is required");
-                } else if (!emailPattern.test(email)) {
-                    $(".email_error").text("Enter valid email");
-                } else {
-                    $(".email_error").text("");
+                    toastr.error('Email is required');
+                    isValid = false;
+                    return;
                 }
+
+
+                let formData = new FormData(this);
+
+                console.log(Object.fromEntries(formData.entries()));
+                $.ajax({
+                    url: "/forgot_password",
+
+                    type: "POST",
+
+                    data: formData,
+
+                    processData: false,
+
+                    contentType: false,
+
+                    dataType: "json",
+
+                    success: function (response) {
+                        if ((response.status = "success")) {
+                            toastr.success(response.message);
+
+                            $("#reset-password-form")[0].reset();
+
+                            $(".text-success").text("");
+
+                            // Optional Redirect
+                            setTimeout(function () {
+                                window.location.href = "/login";
+                            }, 1000);
+                        }
+                        if ((response.status = "error")) {
+                            toastr.error(response.message);
+                            $(".text-danger").text("");
+                        }
+                    },
+
+                    error: function (xhr) {
+                        $(".text-danger").text("");
+
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+                                $("." + key + "_error").text(value[0]);
+
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("Something went wrong.");
+
+                            console.log(xhr.responseText);
+                        }
+                    },
+                });
             });
 
             // $("#reset-password-form").submit(function (e) {

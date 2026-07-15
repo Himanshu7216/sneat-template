@@ -52,9 +52,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+
 </head>
 
 <body>
+    @include('notify::components.notify')
+
     <!-- Content -->
 
     <div class="container-xxl">
@@ -124,9 +129,12 @@
                         <h4 class="mb-1">Reset Password 🔒</h4>
                         <p class="mb-6">Your new password must be different from previously used passwords</p>
 
-                        <form id="new_password" class="mb-6" action="{{ route('new-password') }}" method="post">
+
+                        <form id="password-reset" class="mb-6" action="/new-password" method="post">
                             @csrf
                             <input type="hidden" name="email" value="{{ $email }}">
+                            <input type="hidden" name="token" value="{{ $token }}">
+
                             <div class="mb-6 form-password-toggle">
                                 <label class="form-label" for="new_password">New Password</label>
                                 <div class="input-group input-group-merge">
@@ -143,8 +151,8 @@
                             <div class="mb-6 form-password-toggle">
                                 <label class="form-label" for="confirm_password">Confirm Password</label>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="confirm_password" class="form-control" name="confirm_password"
-                                        maxlength="20"
+                                    <input type="password" id="confirm_password" class="form-control"
+                                        name="confirm_password" maxlength="20"
                                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                         aria-describedby="confirm_password" />
                                     <span class="input-group-text cursor-pointer"><i
@@ -158,11 +166,11 @@
                                 <button class="btn btn-primary d-grid w-100" type="submit">Reset New Password</button>
                             </div>
                             <div class="text-center">
-                            <a href="{{ route('login') }}" class="d-flex justify-content-center">
-                                <i class="icon-base bx bx-chevron-left me-1"></i>
-                                Back to login
-                            </a>
-                        </div>
+                                <a href="{{ route('login') }}" class="d-flex justify-content-center">
+                                    <i class="icon-base bx bx-chevron-left me-1"></i>
+                                    Back to login
+                                </a>
+                            </div>
                         </form>
 
                     </div>
@@ -202,7 +210,13 @@
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="{{ asset('js/helpers/validation-helper.js') }}"></script>
+
+
     <script>
+
         $(document).ready(function () {
 
             $.ajaxSetup({
@@ -210,114 +224,85 @@
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 },
             });
-
-            $('form, input').attr('autocomplete', 'off');
-
-            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
+            toastr.options.preventDuplicates = true;
 
 
-            //password
-            $("#new_password").on("input blur", function () {
-                this.value = this.value.slice(0, 20);
+            validatePassword("#new_password");
+            validatePassword("#confirm_password");
 
-                let new_password = $(this).val().trim();
+            $("#password-reset").submit(function (e) {
+                e.preventDefault();
+                var new_password = $('#new_password').val();
+                var confirm_password = $('#confirm_password').val();
 
-                if (new_password === "") {
-                    $(".new_password_error").text("Password is required");
-                } else if (new_password.length < 8) {
-                    $(".new_password_error").text("Password must be at least 8 characters");
-                } else {
-                    $(".new_password_error").text("");
+                if (new_password === "" || confirm_password === "") {
+                    toastr.error("fields can't empty");
+                    return;
+                } else if (new_password !== confirm_password) {
+                    toastr.error("new password and confirm password must have same value");
+                    return;
                 }
+
+                let formData = new FormData(this);
+
+                console.log(Object.fromEntries(formData.entries()));
+
+                $.ajax({
+
+                    url: '/new-password',
+
+                    type: "POST",
+
+                    data: formData,
+
+                    processData: false,
+
+                    contentType: false,
+
+                    dataType: "json",
+
+                    success: function (response) {
+                        if ((response.status = "success")) {
+                            toastr.success(response.message);
+
+                            $("#password-reset")[0].reset();
+
+                            $(".text-success").text("");
+
+                            // Optional Redirect
+                            setTimeout(function () {
+                                window.location.href = "/login";
+                            }, 1000);
+                        }
+                        if ((response.status = "error")) {
+                            toastr.error(response.message);
+
+                            // $("#formAuthentication")[0].reset();
+
+                            $(".text-danger").text("");
+                        }
+                    },
+
+                    error: function (xhr) {
+                        $(".text-danger").text("");
+
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function (key, value) {
+                                $("." + key + "_error").text(value[0]);
+
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("Something went wrong.");
+
+                            console.log(xhr.responseText);
+                        }
+                    },
+                });
+
             });
-
-            $("#confirm_password").on("input blur", function () {
-                this.value = this.value.slice(0, 20);
-
-                let confirm_password = $(this).val().trim();
-
-                if (confirm_password === "") {
-                    $(".confirm_password_error").text("Password is required");
-                } else if (confirm_password.length < 8) {
-                    $(".confirm_password_error").text("Password must be at least 8 characters");
-                } else {
-                    $(".confirm_password_error").text("");
-                }
-            });
-
-
-            // Submit Login Form
-            // $("#new_password").submit(function (e) {
-
-            //     e.preventDefault();
-
-            //     let formData = new FormData(this);
-
-            //     console.log(Object.fromEntries(formData.entries()));
-
-            //     $.ajax({
-
-            //         url: '/login',
-
-            //         type: "POST",
-
-            //         data: formData,
-
-            //         processData: false,
-
-            //         contentType: false,
-
-            //         dataType: "json",
-
-            //         success: function (response) {
-
-            //             if (response.status === "success") {
-
-            //                 $("#successNotification").fadeIn();
-
-            //                 setTimeout(function () {
-            //                     window.location.href = "/dashboard";
-            //                 }, 1000);
-
-            //             } else {
-
-            //                 $("#errorNotification")
-            //                     .text(response.message)
-            //                     .fadeIn()
-            //                     .delay(3000)
-            //                     .fadeOut();
-
-            //             }
-
-            //         },
-
-            //         error: function (xhr) {
-
-            //             if (xhr.status === 422) {
-
-            //                 $(".text-danger").text("");
-
-            //                 $.each(xhr.responseJSON.errors, function (key, value) {
-
-            //                     $("." + key + "_error").text(value[0]);
-
-            //                 });
-
-            //             } else {
-
-            //                 $("#errorNotification")
-            //                     .text(xhr.responseJSON.message)
-            //                     .fadeIn()
-            //                     .delay(3000)
-            //                     .fadeOut();
-
-            //             }
-
-            //         }
-
-            //     });
-
-            // });
 
         });
     </script>

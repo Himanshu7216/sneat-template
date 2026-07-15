@@ -1,42 +1,43 @@
-$(document).ready(function () {
+$(document).ready(function(){
     $.ajaxSetup({
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
     });
 
-    toastr.options.preventDuplicates = true;
-    // $("form, input").attr("autocomplete", "off");
-    $("#loginLink").on("click", function (e) {
+toastr.options.preventDuplicates = true;
+$("#cancleUpdate").on("click", function (e) {
         e.preventDefault();
 
         window.location.href = $(this).attr("href");
     });
 
-    validateName("#username");
-    validateEmail("#email");
-    validatePassword("#password");
+    // $("#email").prop("readonly", true);
+    $("#email").prop("disabled", true);
+
+
+    validateName("#name");
     validatePhone("#phone");
     validateDOB("#dob");
-    validateGender("#gender", "#genderBtn");
+    // validateGenderField("input[name='gender']");
     validateImage("#profile_image");
-    CheckTerms("#terms-conditions");
+    validateAddress("textarea[name='address']");
+    validateBio("textarea[name='bio']");
 
-    $("#formAuthentication").submit(function (e) {
+    console.log('hiii');
+
+    $('#updateProfileForm').submit(function(e){
         e.preventDefault();
 
-        if (!validateRegisterForm()) {
-            toastr.error("Please fix all validation errors.");
-            return;
-        }
+        updateProfileValidation();
+
+        let form = this;
         let formData = new FormData(this);
-
-        console.log(Object.fromEntries(formData.entries()));
+        console.log('faaaaaaaa');
         // debugger;
-
         $.ajax({
-            url: "/register",
-            type: "POST",
+            url: $(form).attr('action'),
+            type: $(form).attr('method'),
             data: formData,
             contentType: false,
             processData: false,
@@ -45,21 +46,24 @@ $(document).ready(function () {
                 if ((response.status = "success")) {
                     toastr.success(response.message);
 
-                    $("#formAuthentication")[0].reset();
-
                     $(".text-success").text("");
 
                     // Optional Redirect
                     setTimeout(function () {
-                        window.location.href = "/";
+                          window.history.back();
                     }, 1000);
                 }
                 if ((response.status = "error")) {
-                    toastr.error(response.message);
+                    toastr.success(response.message);
 
+                    // $("#formAuthentication")[0].reset();
 
                     $(".text-danger").text("");
 
+                    // Optional Redirect
+                    // setTimeout(function(){
+                    //     window.location.href="/";
+                    // },1000);
                 }
             },
 
@@ -80,8 +84,6 @@ $(document).ready(function () {
                     console.log(xhr.responseText);
                 }
             },
-        });
-    });
+        })
+    })
 });
-
-

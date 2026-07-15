@@ -51,15 +51,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 </head>
 
 <body>
+    @include('notify::components.notify')
     <!-- Content -->
 
     <div class="container-xxl">
         <div class="authentication-wrapper authentication-basic container-p-y">
             <div class="authentication-inner">
-                <!-- Register -->
+                <!-- login -->
                 <div class="card px-sm-6 px-0">
                     <div class="card-body">
                         <!-- Logo -->
@@ -116,7 +119,7 @@
                                         </svg>
                                     </span>
                                 </span>
-                                <span class="app-brand-text demo text-heading fw-bold">Sneat</span>
+                                <span class="app-brand-text demo text-heading fw-bold">Sign in</span>
                             </a>
                         </div>
                         <!-- /Logo -->
@@ -127,15 +130,15 @@
                             @csrf
                             <div class="mb-6">
                                 <label for="email" class="form-label">Email </label>
-                                <input type="text" class="form-control" id="email" maxlength="255" name="email"
+                                <input type="text" class="form-control" id="email"  name="email" maxlength="50" minlength="5" autocomplete="email" 
                                     placeholder="Enter your email " autofocus />
                                 <span class="text-danger email_error"></span>
                             </div>
                             <div class="mb-6 form-password-toggle">
                                 <label class="form-label" for="password">Password</label>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" name="password"
-                                        maxlength="20"
+                                    <input type="password" id="password" class="form-control" name="password" maxlength="64" minlength="8"
+
                                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                         aria-describedby="password" />
                                     <span class="input-group-text cursor-pointer"><i
@@ -146,11 +149,11 @@
                             </div>
                             <div class="mb-8">
                                 <div class="d-flex justify-content-between">
-                                    <div class="form-check mb-0">
+                                    {{-- <div class="form-check mb-0">
                                         <input class="form-check-input" type="checkbox" name="remember"
                                             id="remember-me">
                                         <label class="form-check-label" for="remember-me"> Remember Me </label>
-                                    </div>
+                                    </div> --}}
                                     <a href="{{ route('forgot-password-page') }}">
                                         <span>Forgot Password?</span>
                                     </a>
@@ -163,13 +166,13 @@
 
                         <p class="text-center">
                             <span>New on our platform?</span>
-                            <a href="{{ route('register') }}">
+                            <a href="{{ route('register') }}" id="registerLink">
                                 <span>Create an account</span>
                             </a>
                         </p>
                     </div>
                 </div>
-                <!-- /Register -->
+                <!-- /login -->
             </div>
         </div>
     </div>
@@ -181,7 +184,6 @@
             class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
     </div> --}}
 
-    <!-- Core JS -->
 
     <script src="../assets/vendor/libs/jquery/jquery.js"></script>
 
@@ -204,123 +206,10 @@
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script>
-        $(document).ready(function () {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-            $.ajaxSetup({
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                },
-            });
-
-            // $('form, input').attr('autocomplete', 'off');
-
-            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/;
-
-            //email
-            $("#email").on("input blur", function () {
-                let email = $(this).val().trim();
-
-                if (email === "") {
-                    $(".email_error").text("Email is required");
-                } else if (!emailPattern.test(email)) {
-                    $(".email_error").text("Enter valid email");
-                } else {
-                    $(".email_error").text("");
-                }
-            });
-            //password
-            $("#password").on("input blur", function () {
-                this.value = this.value.slice(0, 20);
-
-                let password = $(this).val().trim();
-
-                if (password === "") {
-                    $(".password_error").text("Password is required");
-                } else if (password.length < 8) {
-                    $(".password_error").text("Password must be at least 8 characters");
-                } else {
-                    $(".password_error").text("");
-                }
-            });
-
-
-            // Submit Login Form
-            $("#formAuthentication").submit(function (e) {
-
-                e.preventDefault();
-
-                let formData = new FormData(this);
-
-                console.log(Object.fromEntries(formData.entries()));
-
-                $.ajax({
-
-                    url: '/login',
-
-                    type: "POST",
-
-                    data: formData,
-
-                    processData: false,
-
-                    contentType: false,
-
-                    dataType: "json",
-
-                    success: function (response) {
-
-                        if (response.status === "success") {
-
-                            $("#successNotification").fadeIn();
-
-                            setTimeout(function () {
-                                window.location.href = "/dashboard";
-                            }, 1000);
-
-                        } else {
-
-                            $("#errorNotification")
-                                .text(response.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
-
-                        }
-
-                    },
-
-                    error: function (xhr) {
-
-                        if (xhr.status === 422) {
-
-                            $(".text-danger").text("");
-
-                            $.each(xhr.responseJSON.errors, function (key, value) {
-
-                                $("." + key + "_error").text(value[0]);
-
-                            });
-
-                        } else {
-
-                            $("#errorNotification")
-                                .text(xhr.responseJSON.message)
-                                .fadeIn()
-                                .delay(3000)
-                                .fadeOut();
-
-                        }
-
-                    }
-
-                });
-
-            });
-
-        });
-    </script>
+<script src="{{ asset('js/helpers/validation-helper.js') }}"></script>
+    <script src="{{ asset('js/login.js') }}"></script>
 </body>
 
 </html>
