@@ -1,6 +1,12 @@
 @extends('layouts.app')
+@section('title','Update Profile')
+
 @section('content')
+{{-- @include('components.breadcrumbs_navigation') --}}
     @include('notify::components.notify')
+    <div class="custom-breadcrumb-container">
+    {{ Breadcrumbs::render('profile') }}
+</div>
 <div class="container mt-5">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">

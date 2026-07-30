@@ -51,7 +51,7 @@ $(document).ready(function () {
 
                     // Optional Redirect
                     setTimeout(function () {
-                        window.location.href = "/";
+                        window.location.href = "/login";
                     }, 1000);
                 }
                 if ((response.status = "error")) {

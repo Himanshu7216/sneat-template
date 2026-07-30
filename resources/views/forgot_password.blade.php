@@ -199,13 +199,10 @@
 
             $("#loginLink").on("click", function (e) {
                 e.preventDefault();
-
                 window.location.href = $(this).attr("href");
             });
 
             validateEmail("#email");
-
-
 
             $("#reset-password-form").submit(function (e) {
                 e.preventDefault();
@@ -277,77 +274,7 @@
                 });
             });
 
-            // $("#reset-password-form").submit(function (e) {
 
-            //     e.preventDefault();
-
-            //     let formData = new FormData(this);
-
-            //     console.log(Object.fromEntries(formData.entries()));
-
-            //     $.ajax({
-
-            //         url: '/reset_password',
-
-            //         type: "get",
-
-            //         data: formData,
-
-            //         processData: false,
-
-            //         contentType: false,
-
-            //         dataType: "json",
-
-            //         success: function (response) {
-
-            //             if (response.status === "success") {
-
-            //                 $("#successNotification").fadeIn();
-
-            //                 setTimeout(function () {
-            //                     window.location.href = "/";
-            //                 }, 1000);
-
-            //             } else {
-
-            //                 $("#errorNotification")
-            //                     .text(response.message)
-            //                     .fadeIn()
-            //                     .delay(3000)
-            //                     .fadeOut();
-
-            //             }
-
-            //         },
-
-            //         error: function (xhr) {
-
-            //             if (xhr.status === 422) {
-
-            //                 $(".text-danger").text("");
-
-            //                 $.each(xhr.responseJSON.errors, function (key, value) {
-
-            //                     $("." + key + "_error").text(value[0]);
-
-            //                 });
-
-            //             } else {
-
-            //                 $("#errorNotification")
-            //                     .text(xhr.responseJSON.message)
-            //                     .fadeIn()
-            //                     .delay(3000)
-            //                     .fadeOut();
-
-            //             }
-
-            //         }
-
-            //     });
-
-            // });
 
         });
     </script>

@@ -1,7 +1,10 @@
 @extends('layouts.app')
-
+@section('title','analytics')
 @section('content')
-
+{{-- @include('components.breadcrumbs_navigation') --}}
+<div class="custom-breadcrumb-container">
+    {{ Breadcrumbs::render('analytics') }}
+</div>
 <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
                 <div class="col-xxl-8 mb-6 order-0">

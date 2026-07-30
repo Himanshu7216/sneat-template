@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Continent;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        City::factory()->create([
+            'name' => 'Vadodara',
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'country_id' => function () {
+
+                return Country::factory()->create([
+                    'name' => 'India',
+
+                    'continent_id' => function () {
+
+                        return Continent::factory()->create([
+                            'name' => 'Asia',
+                        ])->id;
+                    },
+
+                ])->id;
+            },
         ]);
     }
 }

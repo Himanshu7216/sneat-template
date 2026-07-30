@@ -56,29 +56,35 @@
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-              <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
+                <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
             </a>
-          </div>
+        </div>
+
 
           <div class="menu-divider mt-0"></div>
 
           <div class="menu-inner-shadow"></div>
 
+          <p style="margin: auto;">welcome , <b>{{ auth()->user()->name }}</b></p>
           <ul class="menu-inner py-1">
-            <!-- Dashboards -->
-            <li class="menu-item active open">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-home-smile"></i>
-                <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
-                <span class="badge rounded-pill bg-danger ms-auto">5</span>
-              </a>
+
+              <!-- Dashboards -->
+              <li class="menu-item active open">
+
+
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                  <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
+                  <span class="badge rounded-pill bg-danger ms-auto">5</span>
+                </a>
               <ul class="menu-sub">
+
                 <li class="menu-item active">
                   <a href="{{ route('analytics') }}" class="menu-link">
                     <div class="text-truncate" data-i18n="Analytics">Analytics</div>
                   </a>
                 </li>
-                <li class="menu-item">
+                {{-- <li class="menu-item">
                   <a
                     href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/dashboards-crm.html"
                     target="_blank"
@@ -113,8 +119,28 @@
                     <div class="text-truncate" data-i18n="Academy">Academy</div>
                     <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
                   </a>
-                </li>
+                </li> --}}
               </ul>
+              {{-- <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                <div class="text-truncate" data-i18n="Dashboards">Permissions</div>
+              </a> --}}
+
+
+              {{-- <li class="menu-item">
+                  <a href="{{ route('user-management') }}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <div class="text-truncate" data-i18n="Basic">User List</div>
+                  </a>
+              </li> --}}
+
+              <li class="menu-item">
+                  <a href="{{ route('user-management') }}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <div class="text-truncate" data-i18n="Basic">User Management</div>
+                  </a>
+              </li>
+
             </li>
 
             <!-- Layouts -->

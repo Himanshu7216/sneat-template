@@ -12,9 +12,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(function (Request $request) {
-            return route('login');
-        });
+        // $middleware->redirectGuestsTo(function (Request $request) {
+        //     return route('login');
+        // });
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        ]);
+
+         // Guest trying to access protected routes
+        $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
+
+        // Logged-in user trying to access guest routes
+        $middleware->redirectUsersTo(fn (Request $request) => route('dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

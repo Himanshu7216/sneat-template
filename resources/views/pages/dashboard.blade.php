@@ -1,6 +1,11 @@
 @extends('layouts.app')
+@section('title','dashboard')
 
 @section('content')
+{{-- @include('components.breadcrumbs_navigation') --}}
+<div class="custom-breadcrumb-container">
+    {{ Breadcrumbs::render('dashboard') }}
+</div>
 
 <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">

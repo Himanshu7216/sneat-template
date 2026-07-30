@@ -4,7 +4,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard</title>
+    <title>Sneat - @yield('title')</title>
 
     <meta name="description" content="" />
 
@@ -40,6 +40,8 @@
     <!-- Page CSS -->
     <link rel="stylesheet" href="{{ asset('./assets/vendor/css/pages/page-auth.css') }}" />
 
+    {{-- Breadcrumbs navigation css --}}
+    <link rel="stylesheet" href="{{ asset('css/breadcrumbs_navigation.css') }}">
 
     <!-- Helpers -->
         <!-- Helpers -->
@@ -57,5 +59,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    @stack('scripts')
 
   </head>

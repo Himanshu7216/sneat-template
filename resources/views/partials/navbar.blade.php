@@ -1,5 +1,4 @@
-<nav
-            class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
+<nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
             id="layout-navbar">
             <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
               <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
@@ -20,6 +19,7 @@
                 </div>
               </div>
               <!-- /Search -->
+
 
               <ul class="navbar-nav flex-row align-items-center ms-md-auto">
                 <!-- Place this tag where you want the button to render. -->
@@ -67,7 +67,7 @@
                           <div class="flex-grow-1">
 
                             <h6 class="mb-0">{{ auth()->user()->name }}</h6>
-                            <small class="text-body-secondary">Admin</small>
+                            <small class="text-body-secondary">{{ auth()->user()->roles->pluck('name')->implode(', ') }}</small>
                           </div>
                         </div>
                       </a>

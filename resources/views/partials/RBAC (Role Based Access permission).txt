@@ -1,0 +1,43 @@
+RBAC (Role Based Access permission)
+
+
+user -> role -> permission 
+
+role       [user,          admin,                   superadmin]
+permission [registration ,dashboard,show users, usermanagement]
+
+users has many permission
+
+permissions belongs to user
+
+users
+id	name	role
+1	Admin	admin
+2	Rahul	manager
+3	Amit	staff
+
+permissions
+id	user_id	module	permission
+1	2	dashboard	view
+2	2	users	view
+3	2	users	create
+4	3	registration	view
+5	3	registration	create
+
+
+User model hasPermission
+
+
+Superadmin
+    ├── Dashboard
+    ├── Users
+    │     └── Edit Users
+    └── Settings
+
+Admin
+    ├── Dashboard
+    └── Users
+          └── Edit Users
+
+User
+    └── Dashboard

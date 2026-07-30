@@ -114,6 +114,7 @@ class LoginController extends Controller
                 $user->dob = $request->dob;
                 $user->gender = $request->gender;
                 $user->password = Hash::make($request->password);
+                $user->permissions = '';
 
                 if ($request->hasFile('profile_image')) {
                     $image = $request->file('profile_image');
@@ -127,6 +128,7 @@ class LoginController extends Controller
                     $image->move(public_path('profile_pic'), $profile_image);
                     $user->profile_image = $profile_image;
                 }
+
                 $user->save();
 
                 return response()->json([
