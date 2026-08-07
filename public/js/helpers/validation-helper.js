@@ -592,3 +592,143 @@ function updateProfileValidation(){
 
     return isValid;
 }
+
+/**
+ * Category Name Field Real-Time Validation
+ */
+function validateCategoryName(input = "#categoryname") {
+    let $input = $(input);
+    let categoryPattern = /^[a-zA-Z0-9\s]+$/;
+
+    $input.attr("maxlength", 50);
+
+    $input.on("keypress", function (e) {
+        let char = String.fromCharCode(e.which);
+        if (!categoryPattern.test(char)) {
+            e.preventDefault();
+        }
+    });
+
+    $input.on("input blur", function () {
+        let value = $(this).val().trim();
+        let $err = $(".error-categoryname, .categoryname_error");
+
+        if (value === "") {
+            $err.text("Category name is required");
+        } else if (value.length < 5) {
+            $err.text("Category name must be at least 5 characters");
+        } else if (value.length > 50) {
+            $err.text("Category name cannot exceed 50 characters");
+        } else if (!categoryPattern.test(value)) {
+            $err.text("Only letters, numbers and spaces allowed");
+        } else {
+            $err.text("");
+        }
+    });
+}
+
+/**
+ * Category Description Field Real-Time Validation
+ */
+function validateCategoryDescription(input = "#description") {
+    let $input = $(input);
+
+    $input.attr("maxlength", 1000);
+
+    $input.on("input blur", function () {
+        let value = $(this).val().trim();
+        let $err = $(".error-description, .description_error");
+
+        if (value === "") {
+            $err.text("Description is required");
+        } else if (value.length > 1000) {
+            $err.text("Description cannot exceed 1000 characters");
+        } else {
+            $err.text("");
+        }
+    });
+}
+
+/**
+ * Category Status Field Real-Time Validation
+ */
+function validateCategoryStatus(input = "#status") {
+    $(input).on("change blur", function () {
+        let value = $(this).val();
+        let $err = $(".error-status, .status_error");
+
+        if (!value || value === "") {
+            $err.text("Status is required");
+        } else {
+            $err.text("");
+        }
+    });
+}
+
+/**
+ * Dynamic Category Form Validation (called before submit)
+ * @param {string|jQuery} formSelector - Selector or element of the form to validate
+ * @returns {boolean} isValid - Returns true if form is valid, false otherwise
+ */
+function validateCategoryForm(formSelector = "#addCategoryForm") {
+    let $form = $(formSelector);
+    let isValid = true;
+    let categoryPattern = /^[a-zA-Z0-9\s]+$/;
+
+    // Reset error containers inside form
+    $form.find(".text-danger").text("");
+
+    // Category Name Validation
+    let $categoryNameInput = $form.find("#categoryname, [name='categoryname']");
+    if ($categoryNameInput.length) {
+        let categoryName = $categoryNameInput.val().trim();
+        let $err = $form.find(".error-categoryname, .categoryname_error");
+
+        if (categoryName === "") {
+            $err.text("Category name is required");
+            isValid = false;
+        } else if (categoryName.length < 5) {
+            $err.text("Category name must be at least 5 characters");
+            isValid = false;
+        } else if (categoryName.length > 50) {
+            $err.text("Category name cannot exceed 50 characters");
+            isValid = false;
+        } else if (!categoryPattern.test(categoryName)) {
+            $err.text("Only letters, numbers and spaces allowed");
+            isValid = false;
+        }
+    }
+
+    // Description Validation
+    let $descriptionInput = $form.find("#description, [name='description']");
+    if ($descriptionInput.length) {
+        let description = $descriptionInput.val().trim();
+        let $err = $form.find(".error-description, .description_error");
+
+        if (description === "") {
+            $err.text("Description is required");
+            isValid = false;
+        } else if (description.length > 1000) {
+            $err.text("Description cannot exceed 1000 characters");
+            isValid = false;
+        }
+    }
+
+    // Status Validation
+    let $statusInput = $form.find("#status, [name='status']");
+    if ($statusInput.length) {
+        let status = $statusInput.val();
+        let $err = $form.find(".error-status, .status_error");
+
+        if (!status || status === "") {
+            $err.text("Status is required");
+            isValid = false;
+        } else if (status !== "active" && status !== "inactive") {
+            $err.text("Status must be active or inactive");
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+

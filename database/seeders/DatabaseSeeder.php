@@ -32,5 +32,10 @@ class DatabaseSeeder extends Seeder
                 ])->id;
             },
         ]);
+
+        $this->call([
+            CategorySeeder::class,
+            ProductsSeeder::class,
+        ]);
     }
 }

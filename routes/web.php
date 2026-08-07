@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserPermissionController;
 use Illuminate\Support\Facades\Route;
@@ -59,8 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/user_management/{id}', [AdminController::class, 'updateUserManagement'])->name('update-user');
     Route::delete('/user_management/{id}', [AdminController::class, 'deleteUserManagement'])->name('delete-user');
 
-
-
     Route::get('/user_management/create', [AdminController::class, 'createUser'])->name('add-user');
 
 
@@ -68,9 +67,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/user_management/storeModule', [AdminController::class, 'storeModule'])->name('store-module');
 
-
+    //testing role and permission methods
     Route::get('/testing', [UserPermissionController::class, 'testing']);
 
+    //for super admin access
     Route::middleware('role:Super Admin')->group(function () {
         Route::get('/create/role', [UserPermissionController::class, 'createRole'])->name('create-role');
         Route::post('/store/role', [UserPermissionController::class, 'storeRole']);
@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/store/permission', [UserPermissionController::class, 'storePermission']);
     });
 
-
+    //for super admin, admin, manager access
     Route::middleware(['role:Super Admin|Admin|Manager'])->group(function () {
 
         Route::get('/assignPermission', [UserPermissionController::class, 'assignPermissionForm'])->name('assign-permission');
@@ -97,4 +97,42 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/assignPermissionToModel', [UserPermissionController::class, 'assignPermissionToModel']);
     });
+
+
+    //category
+    Route::get('/category', [ProductController::class, 'getCategory'])->name('show-category');
+
+    Route::get('/category/create', [ProductController::class, 'createCategory'])->name('create-category');
+    Route::post('/category/store', [ProductController::class, 'storeCategory']);
+
+    Route::get('/category/{id}/edit', [ProductController::class, 'editCategory'])
+        ->name('edit-category');
+
+    Route::post('/category/{id}/update', [ProductController::class, 'updateCategory'])
+        ->name('update-category');
+
+    Route::delete('/category/{id}', [ProductController::class, 'deleteCategory'])
+        ->name('delete-category');
+
+
+
+    //products
+    Route::get('/products', [ProductController::class, 'getproducts'])->name('show-products');
+
+    Route::get('/products/create', [ProductController::class, 'createProduct'])->name('create-product');
+    Route::post('/products/store', [ProductController::class, 'storeProduct']);
+
+    Route::get('/products/{id}/edit', [ProductController::class, 'editProduct'])
+        ->name('edit-products');
+
+     Route::post('/products/{id}/update', [ProductController::class, 'updateProduct'])
+        ->name('update-products');
+
+    Route::delete('/products/{id}', [ProductController::class, 'deleteProduct'])
+        ->name('delete-product');
+
+
+    Route::view('/dropzone','product_management.dropzone_image')->name('dropzone');
+    Route::post('/upload-image',[ProductController::class,'uploadImage'])
+        ->name('products.uploadImage');
 });

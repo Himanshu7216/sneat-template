@@ -1,6 +1,6 @@
  <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="{{ route('dashboard') }}" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <span class="text-primary">
                   <svg
@@ -55,7 +55,7 @@
               <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span>
             </a>
 
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <a href="{{ route('dashboard') }}" class="layout-menu-toggle menu-link text-large ms-auto">
                 <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
             </a>
         </div>
@@ -75,7 +75,7 @@
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-home-smile"></i>
                   <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
-                  <span class="badge rounded-pill bg-danger ms-auto">5</span>
+                  {{-- <span class="badge rounded-pill bg-danger ms-auto">5</span> --}}
                 </a>
               <ul class="menu-sub">
 
@@ -138,6 +138,19 @@
                   <a href="{{ route('user-management') }}" class="menu-link">
                       <i class="menu-icon tf-icons bx bx-collection"></i>
                       <div class="text-truncate" data-i18n="Basic">User Management</div>
+                  </a>
+              </li>
+               <li class="menu-item">
+                  <a href="{{ route('show-category') }}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <div class="text-truncate" data-i18n="Basic">Category</div>
+                  </a>
+              </li>
+
+              <li class="menu-item">
+                  <a href="{{ route('show-products') }}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <div class="text-truncate" data-i18n="Basic">Products</div>
                   </a>
               </li>
 

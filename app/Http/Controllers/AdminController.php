@@ -66,9 +66,6 @@ class AdminController extends Controller
                 'max:15',
             ],
 
-
-
-
         ]);
 
         $user->update([

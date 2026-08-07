@@ -34,3 +34,8 @@
 .custom-breadcrumb-container .active {
     color: #6c757d;
 }
+
+/* Remove underline from all sidebar links */
+#layout-menu a {
+    text-decoration: none !important;
+}

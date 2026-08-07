@@ -287,19 +287,17 @@ class UserPermissionController extends Controller
 
 
         } catch (ValidationException $e) {
-            dd('validation error');
-            // return response()->json([
-            //     'status' => 'error',
-            //     'message' => 'Validation failed.',
-            //     'errors' => $e->errors(),
-            // ], 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
-            dd('Exception error');
-            // return response()->json([
-            //     'status' => 'error',
-            //     'message' => 'Something went wrong while assigning Role.',
-            //     'error' => $e->getMessage(),
-            // ], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong while assigning Role.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
     // public function testing()
@@ -426,8 +424,7 @@ class UserPermissionController extends Controller
 
         // dd($permissions);
 
-        $user->givePermissionTo($permissions);
-
+        $user->syncPermissions($permissions);
 
         return response()->json([
             'status' => 'success',

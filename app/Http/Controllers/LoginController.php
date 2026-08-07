@@ -45,11 +45,16 @@ class LoginController extends Controller
                 if (!empty($user) && Hash::check($request->password, $user->password)) {
                     Auth::login($user);
                     $request->session()->regenerate();
+                    return response()->json([
+                        'status' => "success",
+                        'message' => 'Login successful'
+                    ]);
                 }
+
                 return response()->json([
-                    'status' => "success",
-                    'message' => 'login successful'
-                ]);
+                    'status' => 'error',
+                    'message' => 'Invalid email or password.'
+                ], 401);
             } catch (Exception $e) {
                 return response()->json([
                     'status' => "error",
@@ -249,6 +254,7 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email', 'max:255'],
             'new_password' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/'],
+            'confirm_password' => ['required', 'string', 'same:new_password'],
         ]);
 
         if ($validator->fails()) {
@@ -270,23 +276,13 @@ class LoginController extends Controller
                 ]);
             }
 
-            if (isset($user) && $request->new_password === $request->confirm_password) {
-                $user->password = Hash::make($request->new_password);
-                $user->save();
+            $user->password = Hash::make($request->new_password);
+            $user->save();
 
-                DB::table('password_reset_tokens')->where('email',$request->email)->update(['token'=>'' ?? null]);
-            }
-            // DB::table('password_reset_tokens')->(
-            //     ['email' => $user->email],
-            //     [
-            //         'token' => Hash::make($request->token),
-            //         'created_at' => now()
-            //     ]
-            // );
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
             return response()->json([
                 'status' => 'success',
-                'email' => $request->email,
-                'new_password' => $request->new_password,
                 'message' => 'Password changed successfully.'
             ]);
         } catch (Exception $e) {

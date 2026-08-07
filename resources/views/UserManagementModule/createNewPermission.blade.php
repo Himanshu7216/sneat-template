@@ -7,7 +7,6 @@
     <div class="custom-breadcrumb-container">
         {{ Breadcrumbs::render('New_permission') }}
     </div>
-
     @include('notify::components.notify')
 
     <div class="container-xxl flex-grow-1 container-p-y">

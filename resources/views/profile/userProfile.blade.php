@@ -75,7 +75,7 @@
                                name="dob"
                                id="dob"
                                class="form-control"
-                               ax="{{ date('Y-m-d') }}"
+                               max="{{ date('Y-m-d') }}"
                                value="{{ old('dob', $user->dob ?? '') }}">
                                 <span class="text-danger error-text dob_error"></span>
                     </div>
@@ -88,11 +88,11 @@
                             <input class="form-check-input"
                                    type="radio"
                                    name="gender"
-                                   id="gender"
+                                   id="gender_male"
                                    value="male"
-                                   checked>
+                                   {{ old('gender', $user->gender ?? '') == 'male' ? 'checked' : '' }}>
 
-                            <label class="form-check-label">
+                            <label class="form-check-label" for="gender_male">
                                 Male
                             </label>
                         </div>
@@ -101,10 +101,11 @@
                             <input class="form-check-input"
                                    type="radio"
                                    name="gender"
-                                   id="gender"
-                                   value="female">
+                                   id="gender_female"
+                                   value="female"
+                                   {{ old('gender', $user->gender ?? '') == 'female' ? 'checked' : '' }}>
 
-                            <label class="form-check-label">
+                            <label class="form-check-label" for="gender_female">
                                 Female
                             </label>
                         </div>
@@ -112,11 +113,12 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input"
                                    type="radio"
-                                   id="gender"
+                                   id="gender_other"
                                    name="gender"
-                                   value="other">
+                                   value="other"
+                                   {{ old('gender', $user->gender ?? '') == 'other' ? 'checked' : '' }}>
 
-                            <label class="form-check-label">
+                            <label class="form-check-label" for="gender_other">
                                 Other
                             </label>
                         </div>
@@ -164,9 +166,9 @@
 
                         {{-- @dd($user->profile_image) --}}
                         <img src="@if (auth()->user()->profile_image)
-                      {{ asset('./profile_pic/'.auth()->user()->profile_image) ?? ''}}
+                      {{ asset('profile_pic/' . auth()->user()->profile_image) }}
                        @else
-                        ../assets/img/avatars/1.png
+                        {{ asset('assets/img/avatars/1.png') }}
                        @endif "
                              class="rounded-circle border"
      style="width:120px; height:120px; object-fit:cover;"
