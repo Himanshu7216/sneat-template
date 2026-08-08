@@ -113,36 +113,33 @@
 
 @can('User Management')
 <td>
-                                        {{ $role->name }}
-                                        {{-- @if ($user->role == "super admin")
-                                            <span class="badge bg-danger">
-                                                {{ $user->role }}
+                                        <!-- {{ $role->name }} -->
+                                         @if ($role->name == "Super Admin")
+                                            <span class="badge bg-dark">
+                                                {{ $role->name }}
                                             </span>
-                                        @elseif ($user->role == "admin")
+                                        @elseif ($role->name == "Admin")
+                                            <span class="badge bg-danger">
+                                                {{ $role->name }}
+                                            </span>
+                                            @elseif ($role->name == "Manager")
                                             <span class="badge bg-warning">
-                                                {{ $user->role }}
+                                                {{ $role->name }}
                                             </span>
                                         @else
                                             <span class="badge bg-success">
-                                                {{ $user->role }}
+                                                {{ $role->name }}
                                             </span>
-                                        @endif --}}
+                                        @endif 
                                     </td>
 
                                     <td>
                                         @foreach($role->permissions as $permission)
+                                        <ul type="circle">
                                             <li>{{$permission->name}}</li>
+                                        </ul>
                                         @endforeach
-                                        {{-- @if(!empty($user->permissions))
-                                            @foreach($user->permissions as $permission)
-                                                <span class="badge bg-success me-1">
-                                                    {{ $permission }}
-                                                </span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted">No Permissions</span>
-                                        @endif --}}
-
+                                        
                                     </td>
                                     <td>
                                         {{-- @can('Edit User') --}}
@@ -157,13 +154,12 @@
                                         {{-- @endcan --}}
                                         @can('Delete User')
 
-                                        <form action="{{ route('delete-user', $user->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('delete-user', $user->id) }}" method="POST" class="d-inline delete-user-form">
 
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this user?')">
+                                            <button type="button" class="btn btn-sm btn-danger btn-delete-user" data-id="{{ $user->id }}">
 
                                                 <i class="bi bi-trash"></i>
                                                 Delete
@@ -189,4 +185,89 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            @if(session('success'))
+                Swal.fire({
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            $(document).on('click', '.btn-delete-user', function (e) {
+                e.preventDefault();
+                let button = $(this);
+                let form = button.closest('form');
+                let tr = button.closest('tr');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to delete this user!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#696cff',
+                    cancelButtonColor: '#8592a3',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: form.attr('action'),
+                            type: 'POST',
+                            data: form.serialize(),
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.status === 'success') {
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: response.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(function () {
+                                        tr.fadeOut(400, function () {
+                                            $(this).remove();
+                                        });
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: response.message || 'Could not delete user.',
+                                        icon: 'error'
+                                    });
+                                }
+                            },
+                            error: function (xhr) {
+                                let msg = xhr.responseJSON?.message || 'Something went wrong while deleting user.';
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: msg,
+                                    icon: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
 @endsection

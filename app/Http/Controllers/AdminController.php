@@ -82,13 +82,33 @@ class AdminController extends Controller
     }
     public function deleteUserManagement($id)
     {
-        $user = User::findOrFail($id);
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
 
-        $user->delete();
+            if (request()->ajax()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'User deleted successfully.'
+                ], 200);
+            }
 
-        return redirect()
-            ->route('user-management')
-            ->with('success', 'User deleted successfully.');
+            return redirect()
+                ->route('user-management')
+                ->with('success', 'User deleted successfully.');
+        } catch (\Exception $e) {
+            if (request()->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to delete user.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to delete user.');
+        }
     }
 
     public function createUser()

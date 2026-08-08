@@ -140,20 +140,20 @@
 
               <li class="menu-item">
                   <a href="{{ route('user-management') }}" class="menu-link">
-                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <i class="menu-icon tf-icons bx bx-group"></i>
                       <div class="text-truncate" data-i18n="Basic">User Management</div>
                   </a>
               </li>
                <li class="menu-item">
                   <a href="{{ route('show-category') }}" class="menu-link">
-                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <i class="menu-icon tf-icons bx bx-category"></i>
                       <div class="text-truncate" data-i18n="Basic">Category</div>
                   </a>
               </li>
 
               <li class="menu-item">
                   <a href="{{ route('show-products') }}" class="menu-link">
-                      <i class="menu-icon tf-icons bx bx-collection"></i>
+                      <i class="menu-icon tf-icons bx bx-package"></i>
                       <div class="text-truncate" data-i18n="Basic">Products</div>
                   </a>
               </li>
