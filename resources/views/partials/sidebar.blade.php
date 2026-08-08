@@ -61,11 +61,15 @@
         </div>
 
 
-          <div class="menu-divider mt-0"></div>
-
-          <div class="menu-inner-shadow"></div>
-
-          <p style="margin: auto;">welcome , <b>{{ auth()->user()->name }}</b></p>
+          <div class="px-3 ">
+            <div class="sidebar-user-card p-2 rounded-3 d-flex align-items-center">
+              
+              <div class="overflow-hidden flex-grow-1">
+                <h6 class="mb-0 text-truncate fw-bold text-heading" style="font-size: 0.875rem;">welcome , {{ auth()->user()->name ?? 'User' }}</h6>
+                
+              </div>
+            </div>
+          </div>
           <ul class="menu-inner py-1">
 
               <!-- Dashboards -->

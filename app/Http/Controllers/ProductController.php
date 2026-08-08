@@ -291,8 +291,40 @@ class ProductController extends Controller
                 ], 422);
             }
 
-            $oldImages = is_array($product->image) ? $product->image : [];
-            $newImages = array_values(array_filter($request->input('uploaded_images', [])));
+            $oldImages = is_array($product->image) ? array_values(array_filter($product->image)) : [];
+            $rawUploadedImages = array_values(array_unique(array_filter($request->input('uploaded_images', []))));
+
+            $newImages = [];
+            $seenHashes = [];
+
+            foreach ($rawUploadedImages as $imgName) {
+                $imgPath = public_path('uploads/products/' . $imgName);
+                if (!is_file($imgPath)) {
+                    $altPath = storage_path('app/public/Products/' . $imgName);
+                    if (is_file($altPath)) {
+                        $imgPath = $altPath;
+                    }
+                }
+
+                if (is_file($imgPath)) {
+                    $hash = md5_file($imgPath);
+                    if ($hash && in_array($hash, $seenHashes, true)) {
+                        // Duplicate image content detected — if this is a newly uploaded duplicate file, remove it from disk
+                        if (!in_array($imgName, $oldImages, true)) {
+                            @unlink($imgPath);
+                        }
+                        // Skip storing duplicate image in table
+                        continue;
+                    }
+                    if ($hash) {
+                        $seenHashes[] = $hash;
+                    }
+                }
+
+                if (!in_array($imgName, $newImages, true)) {
+                    $newImages[] = $imgName;
+                }
+            }
 
             $removedImages = array_diff($oldImages, $newImages);
             foreach ($removedImages as $removedImage) {

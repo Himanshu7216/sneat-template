@@ -222,11 +222,35 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
 
+                accept: function (file, done) {
+                    // Check if newly added file matches existing product image or already added file
+                    if (!file._existingFilename) {
+                        let isDuplicate = myDropzone.files.some(function (f) {
+                            if (f === file) return false;
+                            let fn = f._existingFilename || f._uploadedFilename || f.name || '';
+                            return fn === file.name || (fn.includes('_') && fn.split('_').slice(1).join('_') === file.name);
+                        }) || existingImages.some(function (imgName) {
+                            return imgName === file.name || (imgName.includes('_') && imgName.split('_').slice(1).join('_') === file.name);
+                        });
+
+                        if (isDuplicate) {
+                            toastr.warning("Image '" + file.name + "' matches a previous image. Skipping duplicate image.");
+                            setTimeout(function () {
+                                myDropzone.removeFile(file);
+                            }, 100);
+                            return done("Duplicate image skipped");
+                        }
+                    }
+                    done();
+                },
+
                 success: function (file, response) {
                     // New file uploaded — track its filename
                     if (response && response.filename) {
                         file._uploadedFilename = response.filename;
-                        uploadedImages.push(response.filename);
+                        if (!uploadedImages.includes(response.filename)) {
+                            uploadedImages.push(response.filename);
+                        }
                     }
                     console.log('Uploaded:', response);
                 },
@@ -297,7 +321,9 @@
                     myDropzone.files.push(mockFile);
 
                     // Track this existing image as one that should be kept
-                    uploadedImages.push(filename);
+                    if (!uploadedImages.includes(filename)) {
+                        uploadedImages.push(filename);
+                    }
                 });
             });
 
@@ -305,6 +331,9 @@
 
             $("#EditProductForm").submit(function (e) {
                 e.preventDefault();
+
+                // Deduplicate array
+                uploadedImages = Array.from(new Set(uploadedImages));
 
                 // Guard: at least one image must be present
                 if (uploadedImages.length === 0) {
